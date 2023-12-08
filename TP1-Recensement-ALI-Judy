@@ -1,0 +1,79 @@
+import csv
+import matplotlib.pyplot as plt
+
+def charger_donnees(nom_fichier):
+    table = []
+    with open(nom_fichier, newline='') as csvfile:
+        lecteur = csv.reader(csvfile)
+        for ligne in lecteur:
+            table.append(ligne)
+    return table
+   
+# On commence par mettre les villes qu'on veut étudier dans une liste
+villes = [
+    "Appoigny", "Augy", "Auxerre", "Bleigny-le-Carreau", "Branches", "Champs-sur-Yonne", "Charbuy",
+    "Chevannes", "Chitry", "Coulanges-la-Vineuse", "Escamps", "Escolives Sainte-Camille", "Gurgy",
+    "Gy-l’Évêque", "Irancy", "Jussy", "Lindry", "Monéteau", "Montigny-la-Resle", "Perrigny", "Quenne",
+    "Saint-Bris-le-Vineux", "Saint-Georges-sur-Baulche", "Vallan", "Venoy", "Villefargeau", "Villeneuve-Saint-Salves",
+    "Vincelles", "Vincelottes"
+]
+
+# Ici, on on charge les données de nos trois fichiers 
+donnees_annee2008 = charger_donnees("donnees_2008.csv")
+donnees_annee2016 = charger_donnees("donnees_2016.csv")
+donnees_annee2021 = charger_donnees("donnees_2021.csv")
+
+# Ici, nous extrayons les données de population pour les années et les villes qu'on veut 
+population_2008 = {ville: 0 for ville in villes}
+population_2016 = {ville: 0 for ville in villes}
+population_2021 = {ville: 0 for ville in villes}
+
+
+for ligne in donnees_2008:
+    if len(ligne) >= 10 and ligne[6] in villes:
+        population_2008[ligne[6]] += int(ligne[9])
+
+for ligne in donnees_2016:
+    if len(ligne) >= 10 and ligne[6] in villes:
+        population_2016[ligne[6]] += int(ligne[9])
+        
+for ligne in donnees_2021:
+    if len(ligne) >= 10 and ligne[6] in villes:
+        population_2021[ligne[6]] += int(ligne[9])
+
+# On affiche les résultats pour comparer les populations entre 2008 et 2016, puis entre 2016 et 2021
+if sum(population_2016.values()) < sum(population_2008.values()):
+    print("La population totale des villes a diminué entre 2008 et 2016.")
+elif sum(population_2016.values()) > sum(population_2008.values()):
+    print("Le nombre de la population totale des villes a augmenté entre 2008 et 2016.")
+else:
+    print("Le nombre de la population totale des villes n'a pas changé entre 2008 et 2016.")
+
+if sum(population_2021.values()) < sum(population_2016.values()):
+    print("Le nombre de la population totale des villes a diminué entre 2016 et 2021.")
+elif sum(population_2021.values()) > sum(population_2016.values()):
+    print("Le nombre de la population totale des villes a augmenté entre 2016 et 2021.")
+else:
+    print("Le nombre de la population totale des villes n'a pas changé entre 2016 et 2021.")
+    
+# Ici on fait des listes pour stocker les populations pour chaque année
+populations_2008 = [population_2008[ville] for ville in villes]
+populations_2016 = [population_2016[ville] for ville in villes]
+populations_2021 = [population_2021[ville] for ville in villes]
+
+# Pour Tracer les courbes
+plt.figure(figsize=(10, 5))  
+plt.plot(villes, populations_2008, label='2008')
+plt.plot(villes, populations_2016, label='2016')
+plt.plot(villes, populations_2021, label='2021')
+
+# Pour mettre des détailles 
+plt.xlabel("Villes")
+plt.ylabel("Population")
+plt.title("Évolution de la population totale des differentes villes")
+plt.legend()
+
+# Pour afficher la courbe
+plt.xticks(rotation=90)  
+plt.tight_layout() 
+plt.show()
